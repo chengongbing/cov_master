@@ -1,0 +1,148 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Title</title>
+    <link rel="stylesheet" href="../static/css/index.css">
+    <script src="../static/js/echarts.min.js"></script>
+    <script src="../static/js/jquery-1.11.1.min.js"></script>
+    <script src="../static/js/china.js"></script>
+    <script src="../static/js/echarts-wordcloud.min.js"></script>
+
+</head>
+<body>
+<div id="title"><b>全国疫情实时追踪</b></div>
+<div id="c1">
+    <div class="num"><b>...</b></div>
+    <div class="num"><b>...</b></div>
+    <div class="num"><b>...</b></div>
+    <div class="num"><b>...</b></div>
+    <div class="txt"><b>累计确诊</b></div>
+    <div class="txt"><b>剩余疑似</b></div>
+    <div class="txt"><b>累计治愈</b></div>
+    <div class="txt"><b>累计死亡</b></div>
+
+</div>
+<div id="c2"></div>
+<script src="../static/js/ec_center.js"></script>
+<div id="l1"></div>
+<script src="../static/js/ec_left1.js"></script>
+<div id="l2"></div>
+<script src="../static/js/ec_left2.js"></script>
+<div id="r1"></div>
+<script src="../static/js/ec_right1.js"></script>
+<div id="r2"></div>
+<script src="../static/js/ec_right2.js"></script>
+<div id="time"></div>
+<script>
+    function gettime() {
+        $.ajax({
+            url: "/time",
+            timeout: 1000,
+            success: function (data) {
+                $("#time").html(data)
+            }, error: function (xhr, type, errorThoren) {
+
+            }
+        });
+    }
+
+    setInterval(gettime, 1000)
+
+    function getc1data() {
+        $.ajax({
+            url: 'c1',
+            success: function (data) {
+                $(".num b").eq(0).text(data.confir);
+                $(".num b").eq(1).text(data.suspect);
+                $(".num b").eq(2).text(data.heal);
+                $(".num b").eq(3).text(data.dead);
+            }, error: function () {
+
+            }
+        });
+    }
+
+    getc1data()
+    setInterval(getc1data, 600000)
+
+    function getc2data() {
+        $.ajax({
+            url: '/c2',
+            success: function (data) {
+                ec_center_option.series[0].data = data.data
+                ec_center.setOption(ec_center_option)
+            }, error: function () {
+
+            }
+        });
+    }
+
+    getc2data()
+    setInterval(getc2data, 600000)
+
+    function getl1data() {
+        $.ajax({
+            url: '/l1',
+            success: function (data) {
+                ec_left1_Option.xAxis[0].data = data.day
+                ec_left1_Option.series[0].data = data.confirm
+                ec_left1_Option.series[1].data = data.suspect
+                ec_left1_Option.series[2].data = data.heal
+                ec_left1_Option.series[3].data = data.dead
+                ec_left1.setOption(ec_left1_Option)
+            }, error: function () {
+
+            }
+        });
+    }
+
+    getl1data()
+    setInterval(getl1data, 600000)
+
+    function getl12data() {
+        $.ajax({
+            url: '/l2',
+            success: function (data) {
+                ec_left2_Option.xAxis[0].data = data.day
+                ec_left2_Option.series[0].data = data.confirm_add
+                ec_left2_Option.series[1].data = data.suspect_add
+                ec_left2_Option.series[2].data = data.heal_add
+                ec_left2_Option.series[3].data = data.dead_add
+                ec_left2.setOption(ec_left2_Option)
+            }, error: function () {
+
+            }
+        });
+    }
+
+    getl12data()
+    setInterval(getl12data, 600000)
+
+function getr1data() {
+    $.ajax({
+        url: "/r1",
+        success: function (data) {
+            ec_right1_option.xAxis.data=data.city;
+            ec_right1_option.series[0].data=data.confirm;
+            ec_right1.setOption(ec_right1_option);
+        }
+    })
+}
+    getr1data()
+    setInterval(getr1data,600000)
+
+    function getr2data() {
+    $.ajax({
+        url: "/r2",
+        success: function (data) {
+            ec_right2_option.series[0].data=data.kws;
+            ec_right2.setOption(ec_right2_option);
+        }
+    })
+}
+getr2data()
+    setInterval(getr2data,1000)
+</script>
+</body>
+</html>
